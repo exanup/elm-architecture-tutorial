@@ -29,13 +29,13 @@ main =
 type alias Model =
     { topic : String
     , url : String
-    , error : String
+    , error : Maybe String
     }
 
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-    ( Model "cat" "waiting.gif" ""
+    ( Model "cat" "waiting.gif" Nothing
     , getRandomGif "cat"
     )
 
@@ -66,7 +66,7 @@ update msg model =
         NewGif result ->
             case result of
                 Ok newUrl ->
-                    ( { model | url = newUrl, error = "" }
+                    ( { model | url = newUrl, error = Nothing }
                     , Cmd.none
                     )
 
@@ -95,7 +95,7 @@ update msg model =
                                     in
                                     "Bad Payload: " ++ message
                     in
-                    ( { model | error = errorMessage }
+                    ( { model | error = Just errorMessage }
                     , Cmd.none
                     )
 
@@ -130,7 +130,7 @@ view model =
         , button [ onClick MorePlease ] [ text "More Please!" ]
         , br [] []
         , img [ src model.url ] []
-        , p [] [ text model.error ]
+        , p [] [ text (model.error |> Maybe.withDefault "") ]
         ]
 
 
